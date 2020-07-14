@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .container {
+            background-color: rgb(0, 0, 0, 0.2);
+            /* border: 5px solid black; */
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-self: center;
+        }
+
+        .incont {
+            background: rgba(0, 0, 0, 0);
+            height: 90px;
+            border: 5px solid rgb(59, 26, 7);
+            border-radius: 4px;
+            /* border-bottom: 10px solid rgb(59, 26, 7); */
+            width: 90px;
+            display: inline-block;
+            font-size: 90px;
+            font-family: Arial, Helvetica, sans-serif;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 1px;
+        
+
+
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        div#3 {
+            border-bottom: none;
+        }
+
+        #box20,
+        #box21,
+        #box22 {
+            border-bottom: none;
+
+        }
+
+        .heading {
+            justify-self: start;
+            font-family: Jokerman;
+            font-size: larger;
+        }
+        div 
+        
+        
+        div#3 {
+            border-right: 2px solid red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main" style=" display: flex; align-items: center; justify-content:center;width:100%; height: 800px;">
+        <div class="tic" style="width:600px; height:600px;background-color: black; display:flex;align-items:center;
+     background-image:url(bg.jpg); flex-direction: column; border:10px solid black;
+
+      justify-content:flex-start;">
+            <div class="heading">
+                <h1> TIC TAC TOE</h1>
+            </div>
+            <div class="player"style="font-size:30px;font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;folat:right">
+                Player 1
+                <div style="font-size:30pt;" id="player1">
+                    0
+                </div>
+            </div>
+            <div class="player" style="font-size:30px;font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+                Player 2
+                <div style="font-size:30pt;" id="player2">
+                    0
+                </div>
+            </div>
+            <div class="container" id="con"></div>
+
+        </div>
+        <div class="clear"></div>
+    </div>
+    </div>
+    <script>
+        var cont;
+        let count = 1;
+        var timer;
+        var numberOfPlayers = 2;
+        let p1 = new Array();
+        let p2 = new Array();
+        var currentPlayer = 0;
+        var points1 = 0;
+        var move = 0;
+        var size = 3;
+        var points2 = 0;
+        var winners = new Array();
+        function complete()
+
+        {
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    // console.log(`id${i}${j}`);
+                    cont = document.createElement("div");
+
+                    // cont.setAttribute("id", `box${i}${j}`);
+                    cont.setAttribute("class", 'incont');
+                    document.getElementById('con').appendChild(cont);
+                    
+                    cont.id = count;
+                    
+                    var handler = function () {
+                        if (currentPlayer == 0) {
+                            this.innerHTML = "X";
+                            p1.push(this.id);
+                            p1.sort(function (a, b) { return a - b });
+                            d('player1').classList.remove('selected');
+                            d('player2').classList.add('selected');
+                        }
+                        else {
+                            this.innerHTML = "O";
+                            p2.push(this.id);
+                            p2.sort(function (a, b) { return a - b });
+                            d('player1').classList.remove('selected');
+                            d('player2').classList.add('selected');
+                        }
+                        if (checkWinner()) {
+                            if (currentPlayer == 0)
+                                points1++;
+                            else
+                                points2++;
+
+                            document.getElementById("player1").innerHTML = points1;
+                            document.getElementById("player2").innerHTML = points2;
+
+                            reset(handler);
+                            // complete();
+                        }
+                        else if (p2.length + p1.length == 9) {
+                            reset(handler);
+                            // complete();
+                        }
+                        else {
+                            if (currentPlayer == 0)
+                                currentPlayer = 1;
+                            else
+                                currentPlayer = 0;
+                            this.removeEventListener('click', arguments.callee);
+                        }
+                    };
+                    cont.addEventListener('click', handler);
+                    this.onclick = null;
+                    count++;
+                }
+
+                loadAnswers();
+            }
+        }
+        function d(id) {
+            var el = document.getElementById(id);
+            return el;
+        }
+        function reset(handler) {
+            console.log('reset');
+            currentPlayer = 0;
+            p1 = new Array();
+            p2 = new Array();
+            console.log('p12', p1, p2);
+            d('player1').classList.add('selected');
+            d('player2').classList.remove('selected');
+            // console.log("wdgy",cont);
+            // cont.innerHTML="";
+            // document.getElementById("con").innerHTML = '';
+            for(let i=1; i<=9; i++) {
+                let innerDiv = document.getElementById(i);
+                innerDiv.removeEventListener('click', arguments.handler);
+                console.log('innerDiv', innerDiv);
+                innerDiv.innerHTML = ''
+                innerDiv.addEventListener('click', handler)
+            }
+
+        }
+        function loadAnswers() {
+            winners.push([1, 2, 3]);
+            winners.push([4, 5, 6]);
+            winners.push([7, 8, 9]);
+            winners.push([1, 4, 7]);
+            winners.push([2, 5, 8]);
+            winners.push([3, 6, 9]);
+            winners.push([1, 5, 9]);
+            winners.push([3, 5, 7]);
+        }
+
+        function checkWinner() {
+            var win = false;
+            var playerSelections = new Array();
+
+            if (currentPlayer == 0)
+                playerSelections = p1;
+            else
+                playerSelections = p2;
+            if (playerSelections.length >= size) {
+
+                for (i = 0; i < winners.length; i++) {
+                    var sets = winners[i];
+                    var setFound = true;
+                    for (r = 0; r < sets.length; r++) {
+                        var found = false;
+                        for (s = 0; s < playerSelections.length; s++) {
+                            if (sets[r] == playerSelections[s]) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found == false) {
+                            setFound = false;
+                            break;
+                        }
+                    }
+
+                    if (setFound == true) {
+                        win = true;
+                        break;
+                    }
+                }
+            }
+
+            return win;
+        }
+
+
+        window.addEventListener('load', complete);
+
+    </script>
+</body>
+
+</html>
